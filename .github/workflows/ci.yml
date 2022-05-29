@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  bud:
+    name: Check Go action
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        go: ['1.17', '1.18']
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        id: go
+        with:
+          go-version: ${{ matrix.go }}
+          cache: true
+
+      - name: Install Go modules
+        run: go mod download
+
+      - name: Build
+        run: go build -o dist/hello
